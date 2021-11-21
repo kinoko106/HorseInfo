@@ -8,6 +8,7 @@ namespace HorseInfoCore
 	{
 		Sunny = 1,
 		Croud,
+		LlightRain,
 		Rain,
 		Snow
 	}

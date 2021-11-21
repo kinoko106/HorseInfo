@@ -11,6 +11,10 @@ namespace HorseInfoCore
 			RaceResults = new List<RaceResult>();
 		}
 		/// <summary>
+		/// レースID
+		/// </summary>
+		public string RaceId { get; set; }
+		/// <summary>
 		/// レース場
 		/// </summary>
 		public Cource Course { get; set; }

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "RaceInfoGetter": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\Users\\03dai\\source\\repos\\HorseInfo\\bin\\Debug\\netcoreapp3.1"
+    }
+  }
+}

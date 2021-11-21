@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using HorseInfoCore;
 
@@ -17,12 +18,29 @@ namespace HorseInfoCoreTest
 		//
 		static void Main(string[] args)
 		{
-			Task.Run(async () => {
-				var getter = new KeibaDataGetter();
-				await getter.GetOneRaceInfo("201005030410", "Tokyo");
-
+			var getter = new KeibaDataGetter();
+			Task.Run(async () =>
+			{
+				await getter.GetRaceInfo(2021, 2021);
+				await getter.OutputJson("races");
 			});
-			Console.ReadKey();
+			while (!getter.Finished)
+			{
+
+			}
+			getter.Finished = false;
+
+			var readedRaces = new List<Race>();
+			Task.Run(async () =>
+			{
+				readedRaces = await getter.ReadJson("races");
+			});
+			
+			while (!getter.Finished)
+			{
+
+			}
+			return;
 		}
 	}
 }

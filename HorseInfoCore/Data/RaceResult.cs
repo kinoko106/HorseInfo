@@ -21,7 +21,7 @@ namespace HorseInfoCore
 		/// <summary>
 		/// 馬名
 		/// </summary>
-		public int HorseName { get; set; }
+		public string HorseName { get; set; }
 		/// <summary>
 		/// 牡or牝
 		/// </summary>
@@ -34,7 +34,7 @@ namespace HorseInfoCore
 		/// <summary>
 		/// 斤量
 		/// </summary>
-		public int HandicapWeight { get; set; }
+		public double HandicapWeight { get; set; }
 		/// <summary>
 		/// 騎手ID
 		/// </summary>

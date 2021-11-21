@@ -41,11 +41,15 @@ namespace HorseInfoCore
 
 		public static Weather ToWeather(string inWeatherString)
 		{
+			var weatherString = inWeatherString.Replace(" ", "").Substring(0, 2);
 			var weather = Weather.Sunny;
-			switch (inWeatherString)
+			switch (weatherString)
 			{
 				case "曇":
 					weather = Weather.Croud;
+					break;
+				case "小雨":
+					weather = Weather.LlightRain;
 					break;
 				case "雨":
 					weather = Weather.Rain;
