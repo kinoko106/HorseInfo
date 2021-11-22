@@ -8,6 +8,8 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.IO;
 using System.Collections.Concurrent;
+using System.Text.Encodings.Web;
+using System.Text.Unicode;
 
 namespace HorseInfoCore
 {
@@ -39,14 +41,14 @@ namespace HorseInfoCore
 			for (int year = inYearFrom; year <= inYearTo; year++)
 			{
 				// レース場
-				for (int cource = 1; cource <= 1; cource++)
+				for (int cource = 1; cource <= 10; cource++)
 				{
 					// 週　1-6ぐらい
 					for (int week = 1; week <= 1; week++)
 					{
 						Console.WriteLine("Year:" + year.ToString("D2") + " CourceId:" + cource.ToString("D2") + " week:" + week.ToString("D2"));
 						// 日 1-10ぐらい
-						for (int day = 1; day <= 1; day++)
+						for (int day = 1; day <= 3; day++)
 						{
 							for (int round = 1; round <= 2; round++)
 							{
@@ -173,7 +175,7 @@ namespace HorseInfoCore
 					Rank = int.Parse(horseResults.Children[0].TextContent),
 					BracketNumber = int.Parse(horseResults.Children[1].TextContent),
 					HorseNumber = int.Parse(horseResults.Children[2].TextContent),
-					HorseName = horseResults.Children[3].TextContent,
+					HorseName = horseResults.Children[3].TextContent.Replace("\n", ""),
 					HorseId = horseResults.Children[3].Children[0].GetAttribute("href").ToString().Replace("/","").Replace("horse", ""),
 					HorseGender = horseResults.Children[4].TextContent.Substring(0, 1),
 					HorseAge = int.Parse(horseResults.Children[4].TextContent.Substring(1, 1)),
@@ -254,6 +256,11 @@ namespace HorseInfoCore
 
 		public async Task OutputJson(string inFileName)
 		{
+			var options = new JsonSerializerOptions
+			{
+				Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+				WriteIndented = true
+			};
 			foreach(var racesToYear in BlockRaces)
 			{
 				var year = racesToYear.Key;
@@ -266,9 +273,9 @@ namespace HorseInfoCore
 						var name = inFileName.Split(".");
 						var fileName = name[0] + "_" + year + cource + week + "." + name[1];
 
-						using (FileStream createStream = File.Create(fileName))
+						using (FileStream createStream = File.Create(@"race\" + fileName))
 						{
-							await JsonSerializer.SerializeAsync(createStream, racesToWeek.Value.ToArray());
+							await JsonSerializer.SerializeAsync(createStream, racesToWeek.Value.ToArray(), options);
 							await createStream.DisposeAsync();
 						}
 					}
