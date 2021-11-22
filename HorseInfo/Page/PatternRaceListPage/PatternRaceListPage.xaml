@@ -5,7 +5,10 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:HorseInfo"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
+      d:DesignHeight="{Binding Width}" 
+      d:DesignWidth="{Binding Height}"
+      Width="{Binding Width}"
+      Height="{Binding Height}"
       Title="PatternRaceListPage">
     <Page.DataContext>
         <local:PatternRaceListPageViewModel/>
@@ -19,12 +22,16 @@
             <ComboBox 
                 Height="30" 
                 Width="150" 
-                Margin="30,40,600,40" 
+                Margin="20,40,980,35" 
                 ItemsSource="{Binding YearItems, Mode=OneWay}"
                 DisplayMemberPath="YearString"
             />
         </Grid>
-        <DataGrid Grid.Row="1" />
+        <DataGrid 
+            Grid.Row="1" 
+            Margin="20,20,0,0"
+            ItemsSource="{Binding PatternRaceListItems}"
+        />
         
     </Grid>
 </Page>

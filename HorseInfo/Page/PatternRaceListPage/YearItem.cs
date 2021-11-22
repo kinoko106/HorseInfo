@@ -4,11 +4,9 @@ using System.Text;
 
 namespace HorseInfo
 {
-	public class MainPageViewModel: PageViewModelBase
+	public class YearItem
 	{
-		public MainPageViewModel() : base()
-		{
-
-		}
+		public int Year { get; set; }
+		public string YearString { get; set; }
 	}
 }
