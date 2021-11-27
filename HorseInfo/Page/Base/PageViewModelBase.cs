@@ -9,8 +9,8 @@ namespace HorseInfo
 	{
 		public PageViewModelBase()
 		{
-			Width = 778;
-			Height = 1150;
+			Width = 1150;
+			Height = 778;
 		}
 
 		protected int _Width;

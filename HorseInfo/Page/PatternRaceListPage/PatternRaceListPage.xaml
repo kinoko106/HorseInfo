@@ -15,23 +15,14 @@
     </Page.DataContext>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="100"/>
+            <RowDefinition Height="50"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0">
-            <ComboBox 
-                Height="30" 
-                Width="150" 
-                Margin="20,40,980,35" 
-                ItemsSource="{Binding YearItems, Mode=OneWay}"
-                DisplayMemberPath="YearString"
-            />
-        </Grid>
+        <TextBlock Grid.Row="0" Text="重賞レース一覧"/>
         <DataGrid 
             Grid.Row="1" 
             Margin="20,20,0,0"
-            ItemsSource="{Binding PatternRaceListItems}"
+            ItemsSource="{Binding PatternRaces}"
         />
-        
     </Grid>
 </Page>

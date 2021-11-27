@@ -20,12 +20,14 @@ namespace HorseInfoCore
 	{
 		public bool Finished { get; set; } = false;
 		private const string HorseDBUrl = "";
-		private HorseScraper HorseScraper { get; set; }
+		private string RaceURLBase { get; set; }
+		private Scraper Scraper { get; set; }
 		private Dictionary<string, Dictionary<string, Dictionary<string, BlockingCollection<Race>>>> BlockRaces { get; set; }
 
 		public KeibaDataGetter(string inRaceURLBase)
 		{
-			HorseScraper = new HorseScraper(inRaceURLBase);
+			Scraper = new Scraper();
+			RaceURLBase = inRaceURLBase;
 			BlockRaces = new Dictionary<string, Dictionary<string, Dictionary<string, BlockingCollection<Race>>>>();
 		}
 
@@ -56,7 +58,7 @@ namespace HorseInfoCore
 								var courceId = cource.ToString("D2");
 								var weekId = week.ToString("D2");
 								var raceId = yearId + courceId + weekId + day.ToString("D2") + round.ToString("D2");
-								var race = await GetOneRaceInfo(raceId, courceId);
+								var race = await GetOneRaceInfo(raceId, cource);
 
 								await Task.Delay(1000);
 								if (race == null)
@@ -106,9 +108,9 @@ namespace HorseInfoCore
 			}
 		}
 
-		public async Task<Race> GetOneRaceInfo(string inRaceId, string inCourceString)
+		public async Task<Race> GetOneRaceInfo(string inRaceId, int inCourceId)
 		{
-			var document = await HorseScraper.GetRacePage(inRaceId);
+			var document = await Scraper.GetHtmlDocument(RaceURLBase + inRaceId);
 			if ((document.GetElementsByClassName("mainrace_data fc")?.Length ?? 0) < 1)
 			{
 				return null;
@@ -117,20 +119,21 @@ namespace HorseInfoCore
 			var race = new Race();
 			try
 			{
-				race = AnalysisRaceData(document, inRaceId, inCourceString);
+				race = AnalysisRaceData(document, inRaceId, inCourceId);
 			}
 			catch(Exception ex)
 			{
-				AnalysisRaceData(document, inRaceId, inCourceString);
+				AnalysisRaceData(document, inRaceId, inCourceId);
 				race = null;
 			}
+
 			return race;
 		}
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public Race AnalysisRaceData(IHtmlDocument inHtmlDocument, string inRaceId, string inCourceString)
+		public Race AnalysisRaceData(IHtmlDocument inHtmlDocument, string inRaceId, int inCourceId)
 		{
 			var race = new Race();
 			race.RaceId = inRaceId;
@@ -139,7 +142,7 @@ namespace HorseInfoCore
 			var raceName = raceInfoDocument[0].Children[1].Children[0].TextContent;
 			var raceInfos = raceInfoDocument[0].Children[1].Children[1].Children[0].Children[0].TextContent;
 			var raceInfoParts = raceInfos.Split("/");
-			race.Course = EnumUtility.ToCource(inCourceString);
+			race.Course = EnumUtility.ToCource(inCourceId);
 			race.CourseType = EnumUtility.ToCourceType(raceInfoParts[0].Substring(0, 1));
 			race.Weather = EnumUtility.ToWeather(raceInfoParts[1].Split(":")[1]);
 			race.CourseCondition = EnumUtility.ToCourseCondition(raceInfoParts[2].Split(":")[1]);

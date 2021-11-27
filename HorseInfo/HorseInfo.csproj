@@ -24,4 +24,8 @@
     <ProjectReference Include="..\HorseInfoCore\HorseInfoCore.csproj" />
   </ItemGroup>
 
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="copy HorseInfo.dll.config ..\bin\Debug\netcoreapp3.1&#xD;&#xA;copy HorseInfo.dll.config ..\bin\Release\netcoreapp3.1" />
+  </Target>
+
 </Project>

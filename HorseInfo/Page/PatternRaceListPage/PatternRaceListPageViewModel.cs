@@ -3,73 +3,68 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
 using Livet;
+using HorseInfoCore;
+using System.Configuration;
+using System.Threading.Tasks;
+using System.Windows.Data;
 
 namespace HorseInfo
 {
 	public class PatternRaceListPageViewModel : PageViewModelBase
 	{
-		#region Properties
+		#region Bind Properties
 
-		private ObservableCollection<YearItem> _YearItems = new ObservableCollection<YearItem>();
-		public ObservableCollection<YearItem> YearItems
+		private ObservableSynchronizedCollection<PatternRace> _PatternRaces = new ObservableSynchronizedCollection<PatternRace>();
+		public ObservableSynchronizedCollection<PatternRace> PatternRaces
 		{
 			get
-			{ return _YearItems; }
+			{ return _PatternRaces; }
 			set
 			{
-				if (_YearItems == value)
+				if (_PatternRaces == value)
 					return;
-				_YearItems = value;
-				RaisePropertyChanged(nameof(YearItems));
-			}
-		}
-
-		private ObservableCollection<PatternRaceListItem> _PatternRaceListItem = new ObservableCollection<PatternRaceListItem>();
-		public ObservableCollection<PatternRaceListItem> PatternRaceListItems
-		{
-			get
-			{ return _PatternRaceListItem; }
-			set
-			{
-				if (_PatternRaceListItem == value)
-					return;
-				_PatternRaceListItem = value;
+				_PatternRaces = value;
 				RaisePropertyChanged(nameof(PatternRaceListItem));
 			}
 		}
 
 		#endregion
 
+		#region Properties
+
+		private PatternRaceDataGetter PatternRaceDataGetter { get;  set; } = new PatternRaceDataGetter(ConfigurationManager.AppSettings["patternRaceUrl"]);
+
+		#endregion
+
+		// tableじゃなくてGridで表示する
+
 		public PatternRaceListPageViewModel() : base()
 		{
-			// 2002 ～ 今年までのドロップダウン作る
-			for(int y = 2002; y < DateTime.Today.Year; y++)
-			{
-				_YearItems.Add(new YearItem { Year = y, YearString = y.ToString() + "年" });
-			}
+			BindingOperations.EnableCollectionSynchronization(PatternRaces, new object());
+			// 検索して画面にレース一覧を表示
+			var patternRaceList = PatternRaceDataGetter.GetPatternRaceList();
 
-			PatternRaceListItems.Add(new PatternRaceListItem
+			Task.Run(async () =>
 			{
-				Cource = "東京",
-				CourceType = "芝",
-				Date = new DateTime(2021, 1, 1),
-				Distance = 1800,
-				Grade = "G1",
-				Handicap = "定量",
-				Limit = "2歳",
-				RaceName = "testtest"
+				var patternRaces = await PatternRaceDataGetter.GetPatternRaceList();
+				foreach (var patternRace in patternRaces)
+				{
+					PatternRaces.Add(patternRace);
+				}
 			});
-			PatternRaceListItems.Add(new PatternRaceListItem
-			{
-				Cource = "中京",
-				CourceType = "芝",
-				Date = new DateTime(2021, 1, 2),
-				Distance = 1800,
-				Grade = "G3",
-				Handicap = "定量",
-				Limit = "2歳",
-				RaceName = "testtest"
-			});
+
+			//PatternRaces.Add(new PatternRace()
+			//{
+			//	Cource = Cource.Hakodate,
+			//	CourceName = "函館",
+			//	Date = new DateTime(2021, 1, 1),
+			//	Distance = 2000,
+			//	HandicapType = "",
+			//	RaceGrade = RaceGrade.G1,
+			//	RaceLimit = "",
+			//	RaceName = "テストレース",
+			//	SpecialRacePageId = "test"
+			//});
 		}
 	}
 }
